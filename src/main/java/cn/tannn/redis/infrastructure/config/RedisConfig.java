@@ -17,7 +17,6 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Arrays;
 
 /**
@@ -29,9 +28,6 @@ import java.util.Arrays;
 @Component
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class RedisConfig extends CachingConfigurerSupport {
-
-    @Resource
-    private LettuceConnectionFactory lettuceConnectionFactory;
 
     @Override
     @Bean

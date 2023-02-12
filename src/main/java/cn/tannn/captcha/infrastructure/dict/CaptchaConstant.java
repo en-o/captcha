@@ -11,8 +11,9 @@ public class CaptchaConstant {
 
 	/**
 	 * 图像验证码过期时间 （毫秒
+	 * 1分钟
 	 */
-	public static final Integer IMAGE_CAPTCHA_CACHE_TIMEOUT = 60000;
+	public static final Long IMAGE_CAPTCHA_CACHE_TIMEOUT = 60000L;
 
 
 

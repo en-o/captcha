@@ -33,6 +33,12 @@ public class CaptChaUtilException extends RuntimeException{
         this.msg = message;
     }
 
+    public CaptChaUtilException(CaptChaExceptionMsg message) {
+        super(message.getMessage());
+        this.code = message.getCode();
+        this.msg = message.getMessage();
+    }
+
     public CaptChaUtilException(String message, Throwable cause) {
         super(message, cause);
         this.msg = message;

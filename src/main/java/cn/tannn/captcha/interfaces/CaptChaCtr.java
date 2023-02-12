@@ -7,8 +7,11 @@ import cn.jdevelops.annotation.mapping.PathRestController;
 import cn.jdevelops.result.result.ResultVO;
 import cn.tannn.captcha.domain.CaptchaVO;
 import cn.tannn.captcha.infrastructure.dict.CaptchaConstant;
-import cn.tannn.redis.infrastructure.service.RedisService;
+import cn.tannn.redis.domain.service.RedisService;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
+import reactor.core.publisher.Mono;
+
 
 /**
  *  验证码的生成接口
@@ -28,10 +31,11 @@ public class CaptChaCtr {
 
     /**
      * 算术图形验证码
+     * （后期考虑传入用户code，进行ip+code的唯一key区分。目前就用IP）
      * @return CaptchaVO of ResultVO
      */
-    @GetMapping("/image/math")
-    public ResultVO<CaptchaVO> imageMathCaptcha() {
+    @GetMapping("/math")
+    public Mono<ResultVO<CaptchaVO>> imageMathCaptcha(ServerHttpRequest request) {
         ShearCaptcha captcha = CaptchaUtil.createShearCaptcha(160, 45, 4, 1);
         // 自定义验证码内容为四则运算方式
         captcha.setGenerator(new MathGenerator(1));
@@ -43,8 +47,10 @@ public class CaptChaCtr {
                 .captcha(captcha.getCode())
                 .build();
         // 算术验证码好像没必要存储
-        redisService.storageImageCaptcha(captcha.getCode(),captcha.getCode());
-        return ResultVO.successForData(build);
+        redisService.storageImageCaptcha(build,request);
+        return Mono.justOrEmpty(ResultVO.successForData(build))
+                .onErrorResume(e -> Mono.empty())
+                .switchIfEmpty(Mono.just(ResultVO.fail("获取验证码失败，请重新获取！")));
     }
 
 }

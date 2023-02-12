@@ -6,7 +6,6 @@ import lombok.*;
  * 验证码vo
  *
  * @author tn
- * @className CaptchaVO
  * @date 2021-09-13 15:59
  */
 @Getter
@@ -29,6 +28,6 @@ public class CaptchaVO {
     /**
      *  过期时间（毫秒）
      */
-    private Integer overtime;
+    private Long overtime;
 
 }
