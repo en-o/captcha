@@ -29,4 +29,12 @@ public interface RedisService {
      * @return captcha 无数据为空
      */
     Optional<CaptchaVO> loadImageCaptcha(ServerHttpRequest request);
+
+
+    /**
+     * 删除图形验证码
+     * ip 作为key（后期考虑传入用户code，进行ip+code的唯一key区分。目前就用IP）
+     * @param request 请求信息
+     */
+    void deleteImageCaptcha(ServerHttpRequest request);
 }

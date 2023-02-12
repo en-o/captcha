@@ -26,4 +26,5 @@ public class CaptChaUtil {
         }
         throw new CaptChaUtilException("验证图形码参数异常");
     }
+
 }

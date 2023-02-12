@@ -39,6 +39,7 @@ public class CaptChaVerifyCtr {
                 .orElseThrow(() -> new CaptChaUtilException(CaptChaExceptionMsg.EXPIRES))
                 .getCaptcha();
         Boolean aBoolean = CaptChaUtil.verifyCaptcha(question, answer);
+        redisService.deleteImageCaptcha(request);
         return ResultVO.resultDataMsgForT(aBoolean,aBoolean,"验证");
 
     }

@@ -33,6 +33,7 @@ public class RedisServiceImpl implements RedisService{
     @Resource
     private RedisTemplate<String, String> redisTemplate;
 
+
     @Override
     public void storageImageCaptcha(CaptchaVO captcha, ServerHttpRequest request) {
         // GuavaCache.imageCaptchaCache.put(captcha.getCode(),captcha.getCode());
@@ -57,5 +58,16 @@ public class RedisServiceImpl implements RedisService{
             e.printStackTrace();
             return Optional.empty();
         }
+    }
+
+    @Override
+    public void deleteImageCaptcha(ServerHttpRequest request) {
+       try {
+           String key = IpUtil.getPoxyIpEnhance(request);
+           String redisFolderKey = RedisUtil.storageImageCaptchaRedisFolder(key);
+           redisTemplate.boundHashOps(redisFolderKey).delete(key);
+       }catch (Exception e){
+           e.printStackTrace();
+       }
     }
 }
