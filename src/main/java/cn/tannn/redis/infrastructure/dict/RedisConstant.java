@@ -10,8 +10,8 @@ package cn.tannn.redis.infrastructure.dict;
 public class RedisConstant {
 
     /**
-     * 图像验证码 cacheKey
+     * 验证码缓存key
      */
-    public static final String IMAGE_CAPTCHA_CACHE_TIMEOUT_KEY = "IMAGE_CAPTCHA_CACHE_TIMEOUT";
+    public static final String CAPTCHA_CACHE_KEY = "CAPTCHA_CACHE";
 
 }

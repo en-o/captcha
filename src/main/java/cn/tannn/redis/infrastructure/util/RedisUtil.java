@@ -10,11 +10,11 @@ import cn.tannn.redis.infrastructure.dict.RedisConstant;
 public class RedisUtil {
 
     /**
-     * 图形验证码的存储key
+     * 验证码的存储key
      * @param key key
      * @return folderName:key
      */
-    public static String storageImageCaptchaRedisFolder(String key) {
-        return RedisConstant.IMAGE_CAPTCHA_CACHE_TIMEOUT_KEY +":" + key;
+    public static String storageCaptchaRedisFolder(String key) {
+        return RedisConstant.CAPTCHA_CACHE_KEY +":" + key;
     }
 }

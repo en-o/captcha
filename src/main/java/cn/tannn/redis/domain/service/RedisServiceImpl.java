@@ -37,7 +37,7 @@ public class RedisServiceImpl implements RedisService{
     @Override
     public void storageImageCaptcha(CaptchaVO captcha, ServerHttpRequest request) {
         String key = IpUtil.getPoxyIpEnhance(request);
-        String redisFolderKey = RedisUtil.storageImageCaptchaRedisFolder(key);
+        String redisFolderKey = RedisUtil.storageCaptchaRedisFolder(key);
         redisTemplate.boundHashOps(redisFolderKey).put(key,
                 captcha);
         // 设置过期时间（秒
@@ -47,7 +47,7 @@ public class RedisServiceImpl implements RedisService{
     @Override
     public Optional<CaptchaVO> loadImageCaptcha(ServerHttpRequest request) {
         String key = IpUtil.getPoxyIpEnhance(request);
-        String redisFolderKey = RedisUtil.storageImageCaptchaRedisFolder(key);
+        String redisFolderKey = RedisUtil.storageCaptchaRedisFolder(key);
         try {
             BoundHashOperations<String, Object, CaptchaVO> find = redisTemplate
                     .boundHashOps(redisFolderKey);
@@ -63,7 +63,7 @@ public class RedisServiceImpl implements RedisService{
     public void deleteImageCaptcha(ServerHttpRequest request) {
        try {
            String key = IpUtil.getPoxyIpEnhance(request);
-           String redisFolderKey = RedisUtil.storageImageCaptchaRedisFolder(key);
+           String redisFolderKey = RedisUtil.storageCaptchaRedisFolder(key);
            redisTemplate.boundHashOps(redisFolderKey).delete(key);
        }catch (Exception e){
            e.printStackTrace();
