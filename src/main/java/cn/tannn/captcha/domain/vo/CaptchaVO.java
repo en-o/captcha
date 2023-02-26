@@ -1,5 +1,6 @@
-package cn.tannn.captcha.domain;
+package cn.tannn.captcha.domain.vo;
 
+import cn.tannn.captcha.domain.enums.CaptchaType;
 import lombok.*;
 
 /**
@@ -29,5 +30,10 @@ public class CaptchaVO {
      *  过期时间（毫秒）
      */
     private Long overtime;
+
+    /**
+     *  验证码类型
+     */
+    private CaptchaType captchaType;
 
 }

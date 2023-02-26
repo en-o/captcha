@@ -2,9 +2,10 @@ package cn.tannn.captcha.interfaces;
 
 import cn.jdevelops.annotation.mapping.PathRestController;
 import cn.jdevelops.result.result.ResultVO;
+import cn.tannn.captcha.domain.service.factory.VerifyCaptchaFactory;
+import cn.tannn.captcha.domain.vo.CaptchaVO;
 import cn.tannn.captcha.infrastructure.exception.CaptChaExceptionMsg;
 import cn.tannn.captcha.infrastructure.exception.CaptChaUtilException;
-import cn.tannn.captcha.infrastructure.util.CaptChaUtil;
 import cn.tannn.redis.domain.service.RedisService;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,17 +29,18 @@ public class CaptChaVerifyCtr {
     }
 
     /**
-     * 验证算术验证码的正确性
+     * 验证验证码的正确性
      * @param answer 用户回答的答案
      * @return ture or false
      */
-    @GetMapping("/math/{answer}")
+    @GetMapping("/{answer}")
     public ResultVO<Boolean> imageMathCaptcha(@PathVariable("answer") String answer,
-                                              ServerHttpRequest request) {
-        String question = redisService.loadImageCaptcha(request)
-                .orElseThrow(() -> new CaptChaUtilException(CaptChaExceptionMsg.EXPIRES))
-                .getCaptcha();
-        Boolean aBoolean = CaptChaUtil.verifyCaptcha(question, answer);
+                                              ServerHttpRequest request) throws IllegalAccessException {
+        CaptchaVO redisCaptcha = redisService.loadImageCaptcha(request)
+                .orElseThrow(() -> new CaptChaUtilException(CaptChaExceptionMsg.EXPIRES));
+        String question = redisCaptcha.getCaptcha();
+        VerifyCaptchaFactory captchaFactory = new VerifyCaptchaFactory(redisCaptcha.getCaptchaType());
+        Boolean aBoolean = captchaFactory.verifyCaptcha(question, answer);
         redisService.deleteImageCaptcha(request);
         return ResultVO.resultDataMsgForT(aBoolean,aBoolean,"验证");
 

@@ -1,6 +1,6 @@
 package cn.tannn.redis.domain.service;
 
-import cn.tannn.captcha.domain.CaptchaVO;
+import cn.tannn.captcha.domain.vo.CaptchaVO;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 
 import java.util.Optional;
