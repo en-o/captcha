@@ -1,6 +1,7 @@
 package cn.tannn.captcha.interfaces;
 
 import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.CircleCaptcha;
 import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.captcha.ShearCaptcha;
 import cn.hutool.captcha.generator.MathGenerator;
@@ -10,6 +11,8 @@ import cn.tannn.captcha.domain.enums.CaptchaType;
 import cn.tannn.captcha.domain.vo.CaptchaVO;
 import cn.tannn.redis.domain.service.RedisService;
 import cn.tannn.redis.infrastructure.dict.RedisCaptchaConstant;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import reactor.core.publisher.Mono;
@@ -24,6 +27,7 @@ import reactor.core.publisher.Mono;
  */
 @PathRestController("captcha")
 public class CaptChaCtr {
+    private static final String ERROR_MESSAGE = "获取验证码失败，请重新获取！";
 
     private final RedisService redisService;
 
@@ -52,7 +56,7 @@ public class CaptChaCtr {
         redisService.storageImageCaptcha(build,request);
         return Mono.justOrEmpty(ResultVO.successForData(build))
                 .onErrorResume(e -> Mono.empty())
-                .switchIfEmpty(Mono.just(ResultVO.fail("获取验证码失败，请重新获取！")));
+                .switchIfEmpty(Mono.just(ResultVO.fail(ERROR_MESSAGE)));
     }
 
 
@@ -73,7 +77,50 @@ public class CaptChaCtr {
         redisService.storageImageCaptcha(build,request);
         return Mono.justOrEmpty(ResultVO.successForData(build))
                 .onErrorResume(e -> Mono.empty())
-                .switchIfEmpty(Mono.just(ResultVO.fail("获取验证码失败，请重新获取！")));
+                .switchIfEmpty(Mono.just(ResultVO.fail(ERROR_MESSAGE)));
+    }
+
+
+
+    /**
+     * 圆圈干扰图形验证码
+     * @return CaptchaVO of ResultVO
+     */
+    @GetMapping("/circle")
+    public Mono<ResultVO<CaptchaVO>> imageCircleCaptcha(ServerHttpRequest request) {
+        CircleCaptcha captcha = CaptchaUtil.createCircleCaptcha(160, 45, 4, 20);
+        CaptchaVO build = CaptchaVO.builder()
+                .base64(captcha.getImageBase64Data())
+                .overtime(RedisCaptchaConstant.CAPTCHA_CACHE_TIMEOUT)
+                .captcha(captcha.getCode())
+                .captchaType(CaptchaType.CIRCLE)
+                .build();
+        // 存储，验证用
+        redisService.storageImageCaptcha(build,request);
+        return Mono.justOrEmpty(ResultVO.successForData(build))
+                .onErrorResume(e -> Mono.empty())
+                .switchIfEmpty(Mono.just(ResultVO.fail(ERROR_MESSAGE)));
+    }
+
+
+    /**
+     * 扭曲干扰图形验证码
+     * @return CaptchaVO of ResultVO
+     */
+    @GetMapping("/shear")
+    public Mono<ResultVO<CaptchaVO>> imageShearCaptcha(ServerHttpRequest request) {
+        ShearCaptcha captcha = CaptchaUtil.createShearCaptcha(160, 45, 4, 4);
+        CaptchaVO build = CaptchaVO.builder()
+                .base64(captcha.getImageBase64Data())
+                .overtime(RedisCaptchaConstant.CAPTCHA_CACHE_TIMEOUT)
+                .captcha(captcha.getCode())
+                .captchaType(CaptchaType.SHEAR)
+                .build();
+        // 存储，验证用
+        redisService.storageImageCaptcha(build,request);
+        return Mono.justOrEmpty(ResultVO.successForData(build))
+                .onErrorResume(e -> Mono.empty())
+                .switchIfEmpty(Mono.just(ResultVO.fail(ERROR_MESSAGE)));
     }
 
 
