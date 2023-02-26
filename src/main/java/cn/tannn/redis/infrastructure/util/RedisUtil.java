@@ -1,6 +1,6 @@
 package cn.tannn.redis.infrastructure.util;
 
-import cn.tannn.redis.infrastructure.dict.RedisConstant;
+import cn.tannn.redis.infrastructure.dict.RedisCaptchaConstant;
 
 /**
  * @author tnnn
@@ -15,6 +15,6 @@ public class RedisUtil {
      * @return folderName:key
      */
     public static String storageCaptchaRedisFolder(String key) {
-        return RedisConstant.CAPTCHA_CACHE_KEY +":" + key;
+        return RedisCaptchaConstant.CAPTCHA_CACHE_KEY +":" + key;
     }
 }

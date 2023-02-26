@@ -1,13 +1,14 @@
 package cn.tannn.captcha.interfaces;
 
 import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.captcha.ShearCaptcha;
 import cn.hutool.captcha.generator.MathGenerator;
 import cn.jdevelops.annotation.mapping.PathRestController;
 import cn.jdevelops.result.result.ResultVO;
 import cn.tannn.captcha.domain.CaptchaVO;
-import cn.tannn.captcha.infrastructure.dict.CaptchaConstant;
 import cn.tannn.redis.domain.service.RedisService;
+import cn.tannn.redis.infrastructure.dict.RedisCaptchaConstant;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import reactor.core.publisher.Mono;
@@ -31,7 +32,6 @@ public class CaptChaCtr {
 
     /**
      * 算术图形验证码
-     * （后期考虑传入用户code，进行ip+code的唯一key区分。目前就用IP）
      * @return CaptchaVO of ResultVO
      */
     @GetMapping("/math")
@@ -43,7 +43,29 @@ public class CaptChaCtr {
         captcha.createCode();
         CaptchaVO build = CaptchaVO.builder()
                 .base64(captcha.getImageBase64Data())
-                .overtime(CaptchaConstant.IMAGE_CAPTCHA_CACHE_TIMEOUT)
+                .overtime(RedisCaptchaConstant.CAPTCHA_CACHE_TIMEOUT)
+                .captcha(captcha.getCode())
+                .build();
+        // 存储，验证用
+        redisService.storageImageCaptcha(build,request);
+        return Mono.justOrEmpty(ResultVO.successForData(build))
+                .onErrorResume(e -> Mono.empty())
+                .switchIfEmpty(Mono.just(ResultVO.fail("获取验证码失败，请重新获取！")));
+    }
+
+
+    /**
+     * 线段干扰图形验证码
+     * @return CaptchaVO of ResultVO
+     */
+    @GetMapping("/math")
+    public Mono<ResultVO<CaptchaVO>> imageLineCaptcha(ServerHttpRequest request) {
+        LineCaptcha captcha = CaptchaUtil.createLineCaptcha(160, 45, 4, 1);
+        // 重新生成code
+        captcha.createCode();
+        CaptchaVO build = CaptchaVO.builder()
+                .base64(captcha.getImageBase64Data())
+                .overtime(RedisCaptchaConstant.CAPTCHA_CACHE_TIMEOUT)
                 .captcha(captcha.getCode())
                 .build();
         // 存储，验证用
