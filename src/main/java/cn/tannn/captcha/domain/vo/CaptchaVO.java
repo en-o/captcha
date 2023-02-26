@@ -1,6 +1,8 @@
 package cn.tannn.captcha.domain.vo;
 
 import cn.tannn.captcha.domain.enums.CaptchaType;
+import cn.tannn.captcha.domain.slide.SlideCaptcha;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 /**
@@ -17,12 +19,18 @@ import lombok.*;
 @NoArgsConstructor
 public class CaptchaVO {
     /**
-     *  验证码base64
+     *  验证码base64(画布)
      */
     private String base64;
 
     /**
-     * 验证码数据（要回传
+     * 滑动验证特有字段
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private SlideCaptcha slide;
+
+    /**
+     * 验证码数据
      */
     private String captcha;
 

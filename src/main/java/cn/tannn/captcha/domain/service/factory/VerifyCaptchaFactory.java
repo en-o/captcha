@@ -4,6 +4,7 @@ import cn.tannn.captcha.domain.enums.CaptchaType;
 import cn.tannn.captcha.domain.service.VerifyCaptcha;
 import cn.tannn.captcha.domain.service.impl.ComparisonVerifyCaptcha;
 import cn.tannn.captcha.domain.service.impl.MathVerifyCaptcha;
+import cn.tannn.captcha.domain.service.impl.SlideVerifyCaptcha;
 
 /**
  * 验证码验证工厂
@@ -19,6 +20,7 @@ public class VerifyCaptchaFactory {
         switch (type) {
             case MATH -> this.verifyCaptcha = new MathVerifyCaptcha();
             case CIRCLE, LINE, SHEAR -> this.verifyCaptcha = new ComparisonVerifyCaptcha();
+            case SLIDE -> this.verifyCaptcha = new SlideVerifyCaptcha();
             case null, default -> throw new IllegalAccessException("非法的验证码");
         }
     }

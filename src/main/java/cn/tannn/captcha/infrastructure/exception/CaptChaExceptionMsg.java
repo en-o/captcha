@@ -13,7 +13,12 @@ public enum CaptChaExceptionMsg {
     /**
      * 验证码已过期
      */
-    EXPIRES(3001,"验证码已过期，请重新获取！")
+    EXPIRES(3001,"验证码已过期，请重新获取！"),
+
+    /**
+     * 验证失败，请控制拼图对齐缺口！
+     */
+    SLIDE_EXPIRES(3001,"验证失败，请控制拼图对齐缺口！"),
     ;
 
     private final int code;

@@ -28,6 +28,11 @@ public enum CaptchaType {
      */
     SHEAR("shear","扭曲"),
 
+    /**
+     * 滑动
+     */
+    SLIDE("slide","滑动"),
+
     ;
 
     final String code;
@@ -51,7 +56,7 @@ public enum CaptchaType {
     /**
      * 根据code 获取 枚举
      * @param code code
-     * @return
+     * @return CaptchaType
      */
     public static CaptchaType codeByEnum(String code) {
         for (CaptchaType captchaType : CaptchaType.values()) {

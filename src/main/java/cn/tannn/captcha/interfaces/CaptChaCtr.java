@@ -8,14 +8,16 @@ import cn.hutool.captcha.generator.MathGenerator;
 import cn.jdevelops.annotation.mapping.PathRestController;
 import cn.jdevelops.result.result.ResultVO;
 import cn.tannn.captcha.domain.enums.CaptchaType;
+import cn.tannn.captcha.domain.slide.SlideCaptcha;
+import cn.tannn.captcha.domain.slide.SlideCaptchaService;
 import cn.tannn.captcha.domain.vo.CaptchaVO;
 import cn.tannn.redis.domain.service.RedisService;
 import cn.tannn.redis.infrastructure.dict.RedisCaptchaConstant;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import reactor.core.publisher.Mono;
+
+import java.util.Objects;
 
 
 /**
@@ -31,8 +33,14 @@ public class CaptChaCtr {
 
     private final RedisService redisService;
 
-    public CaptChaCtr(RedisService redisService) {
+    /**
+     * 滑动验证码
+     */
+    private final SlideCaptchaService slideCaptchaService;
+
+    public CaptChaCtr(RedisService redisService, SlideCaptchaService slideCaptchaService) {
         this.redisService = redisService;
+        this.slideCaptchaService = slideCaptchaService;
     }
 
     /**
@@ -118,6 +126,32 @@ public class CaptChaCtr {
                 .build();
         // 存储，验证用
         redisService.storageImageCaptcha(build,request);
+        return Mono.justOrEmpty(ResultVO.successForData(build))
+                .onErrorResume(e -> Mono.empty())
+                .switchIfEmpty(Mono.just(ResultVO.fail(ERROR_MESSAGE)));
+    }
+
+
+
+    /**
+     * 滑动验证码
+     * @return CaptchaVO of ResultVO
+     */
+    @GetMapping("/slide")
+    public Mono<ResultVO<CaptchaVO>> imageSlideCaptcha(ServerHttpRequest request) {
+        SlideCaptcha captcha = slideCaptchaService.getCaptcha(request);
+        // 缓存
+        CaptchaVO build = CaptchaVO.builder()
+                .overtime(RedisCaptchaConstant.CAPTCHA_CACHE_TIMEOUT)
+                // getBlockX -  answer(SlideCaptcha.value) < 允许偏差
+                .captcha(String.valueOf(Objects.isNull(captcha.getBlockX())?"0":captcha.getBlockX()))
+                .captchaType(CaptchaType.SLIDE).build();
+        // 存储，验证用
+        redisService.storageImageCaptcha(build,request);
+        // 这个不能返回给前端
+        captcha.setBlockX(null);
+        // 这个没必要存
+        build.setSlide(captcha);
         return Mono.justOrEmpty(ResultVO.successForData(build))
                 .onErrorResume(e -> Mono.empty())
                 .switchIfEmpty(Mono.just(ResultVO.fail(ERROR_MESSAGE)));
