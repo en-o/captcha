@@ -36,7 +36,6 @@ public class RedisServiceImpl implements RedisService{
 
     @Override
     public void storageImageCaptcha(CaptchaVO captcha, ServerHttpRequest request) {
-        // GuavaCache.imageCaptchaCache.put(captcha.getCode(),captcha.getCode());
         String key = IpUtil.getPoxyIpEnhance(request);
         String redisFolderKey = RedisUtil.storageImageCaptchaRedisFolder(key);
         redisTemplate.boundHashOps(redisFolderKey).put(key,

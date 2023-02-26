@@ -46,7 +46,7 @@ public class CaptChaCtr {
                 .overtime(CaptchaConstant.IMAGE_CAPTCHA_CACHE_TIMEOUT)
                 .captcha(captcha.getCode())
                 .build();
-        // 算术验证码好像没必要存储
+        // 存储，验证用
         redisService.storageImageCaptcha(build,request);
         return Mono.justOrEmpty(ResultVO.successForData(build))
                 .onErrorResume(e -> Mono.empty())
