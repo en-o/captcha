@@ -1,19 +1,15 @@
 package cn.tannn.captcha.domain.config;
 
 import cn.tannn.captcha.infrastructure.exception.CaptChaUtilException;
-import cn.tannn.redis.domain.service.RedisServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.util.Objects;
@@ -60,8 +56,8 @@ public class CaptchaSetting {
     public BufferedImage sildeFile(){
         try {
             if(Objects.isNull(slide)||slide.equalsIgnoreCase(DEFAULT_IMAGES)){
-                ClassPathResource resource = new ClassPathResource(DEFAULT_IMAGES);
-                return ImageIO.read(resource.getFile());
+                ClassPathResource classpathResource = new ClassPathResource(DEFAULT_IMAGES);
+                return ImageIO.read(classpathResource.getInputStream());
             }else if(slide.startsWith(HTTP_URL)){
                 URL url = new URL(slide);
                 return ImageIO.read(url.openStream());
