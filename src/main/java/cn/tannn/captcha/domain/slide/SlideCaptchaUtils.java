@@ -1,5 +1,7 @@
 package cn.tannn.captcha.domain.slide;
 
+import cn.jdevelops.result.util.SpringBeanUtils;
+import cn.tannn.captcha.domain.config.CaptchaSetting;
 import cn.tannn.redis.domain.service.RedisServiceImpl;
 import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
@@ -24,16 +26,15 @@ public class SlideCaptchaUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(RedisServiceImpl.class);
 
-    // todo 背景图要使用配置文件连接（动态随机获取），目前测试写死
-    /**
-     * 网络图片地址
-     **/
-    private final static String IMG_URL = "http://e.hiphotos.baidu.com/image/pic/item/a1ec08fa513d2697e542494057fbb2fb4316d81e.jpg";
-
-    /**
-     * 本地图片地址
-     **/
-    private final static String IMG_PATH = "E:\\测试图片\\ganh.png";
+//    /**
+//     * 网络图片地址
+//     **/
+//    private final static String IMG_URL = "http://e.hiphotos.baidu.com/image/pic/item/a1ec08fa513d2697e542494057fbb2fb4316d81e.jpg";
+//
+//    /**
+//     * 本地图片地址
+//     **/
+//    private final static String IMG_PATH = "E:\\测试图片\\ganh.png";
 
     /**
      * 入参校验设置默认值
@@ -59,10 +60,6 @@ public class SlideCaptchaUtils {
         if (captcha.getBlockRadius() == null) {
             captcha.setBlockRadius(9);
         }
-        //设置图片来源默认值
-        if (captcha.getPlace() == null) {
-            captcha.setPlace(1);
-        }
     }
 
     /**
@@ -76,22 +73,10 @@ public class SlideCaptchaUtils {
     /**
      * 获取验证码资源图
      **/
-    public static BufferedImage getBufferedImage(Integer place) {
+    public static BufferedImage getBufferedImage() {
         try {
-            //随机图片
-            int nonce = getNonceByRange(0, 1000);
-            //获取网络资源图片
-            if (0 == place) {
-                String imgUrl = String.format(IMG_URL, nonce);
-                URL url = new URL(imgUrl);
-                return ImageIO.read(url.openStream());
-            }
-            //获取本地图片
-            else {
-                String imgPath = String.format(IMG_PATH, nonce);
-                File file = new File(imgPath);
-                return ImageIO.read(file);
-            }
+            CaptchaSetting setting = SpringBeanUtils.getInstance().getBean(CaptchaSetting.class);
+            return setting.sildeFile();
         } catch (Exception e) {
             LOG.error("获取拼图资源失败");
             //异常处理

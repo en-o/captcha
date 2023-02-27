@@ -57,10 +57,5 @@ public class SlideCaptcha {
      * 阻塞块的纵轴坐标
      **/
     private Integer blockY;
-    /**
-     * 图片获取位置
-     **/
-    private Integer place;
-
 
 }

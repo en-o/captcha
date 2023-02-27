@@ -21,7 +21,7 @@ public class SlideCaptchaService {
         // 参数校验
          SlideCaptchaUtils.checkCaptcha(slideCaptcha);
         // 获取资源图
-        BufferedImage canvasImage = SlideCaptchaUtils.getBufferedImage(slideCaptcha.getPlace());
+        BufferedImage canvasImage = SlideCaptchaUtils.getBufferedImage();
         //调整原图到指定大小
         canvasImage = SlideCaptchaUtils.imageResize(canvasImage,
                 slideCaptcha.getCanvasWidth(),

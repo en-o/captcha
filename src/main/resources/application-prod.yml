@@ -1,0 +1,17 @@
+spring:
+  redis:
+    host: 127.0.0.2
+    port: 8502
+    password: 123456
+    database: 6
+    lettuce:
+      pool:
+        max-active: 32 #  可用连接的最大等待时间，单位毫秒，默认值为-1，表示永不超时 如果超时，则直接抛出JedisConnectionException
+        max-wait: 100 # 最大jedis实例个数，如果赋值为-1，则表示不限制
+        min-idle: 4 # 最小空闲连接
+        max-idle: 6 # 最大空闲连接
+    timeout: 1000
+
+jdevelops:
+  captcha:
+    slide: E:\img\
