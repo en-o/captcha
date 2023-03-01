@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.URL;
 import java.security.SecureRandom;
 import java.util.Objects;
 
@@ -25,14 +24,11 @@ import java.util.Objects;
 @ConfigurationProperties(prefix = "jdevelops.captcha")
 public class CaptchaSetting {
     private static final Logger LOG = LoggerFactory.getLogger(CaptchaSetting.class);
-
-    private final String HTTP_URL = "http";
     private final String DEFAULT_IMAGES = "img/slide/test-2.png";
 
     /**
-     * 滑动验证码的资源图集，随机不同的图片(可网络，可本地)
+     * 滑动验证码的资源图集，随机不同的图片(本地图集)
      * 本地: "E:\\测试图片\\" (文件夹下不允许再有文件夹)
-     * 网络: "http(s)://test.com/image/" (文件夹下不允许再有文件夹)
      * 默认: 内置的一张图
      */
     String slide;
@@ -58,9 +54,6 @@ public class CaptchaSetting {
             if(Objects.isNull(slide)||slide.equalsIgnoreCase(DEFAULT_IMAGES)){
                 ClassPathResource classpathResource = new ClassPathResource(DEFAULT_IMAGES);
                 return ImageIO.read(classpathResource.getInputStream());
-            }else if(slide.startsWith(HTTP_URL)){
-                URL url = new URL(slide);
-                return ImageIO.read(url.openStream());
             }else {
                 File file = new File(slide);
                 if(file.isDirectory()){
