@@ -24,7 +24,7 @@ import java.util.Objects;
 @ConfigurationProperties(prefix = "jdevelops.captcha")
 public class CaptchaSetting {
     private static final Logger LOG = LoggerFactory.getLogger(CaptchaSetting.class);
-    private final String DEFAULT_IMAGES = "img/slide/test-2.png";
+
 
     /**
      * 滑动验证码的资源图集，随机不同的图片(本地图集)
@@ -50,19 +50,26 @@ public class CaptchaSetting {
     }
 
     public BufferedImage sildeFile(){
+        String defaultImages = "img/slide/test-2.png";
         try {
-            if(Objects.isNull(slide)||slide.equalsIgnoreCase(DEFAULT_IMAGES)){
-                ClassPathResource classpathResource = new ClassPathResource(DEFAULT_IMAGES);
+            if(Objects.isNull(slide)||slide.equalsIgnoreCase(defaultImages)){
+                ClassPathResource classpathResource = new ClassPathResource(defaultImages);
                 return ImageIO.read(classpathResource.getInputStream());
             }else {
                 File file = new File(slide);
                 if(file.isDirectory()){
                     File[] files = file.listFiles();
-                    //创建随机对象
-                    SecureRandom random = new SecureRandom();
-                    //随机数组索引，nextInt(len-1)表示随机整数[0,(len-1)]之间的值
-                    int arrIdx = random.nextInt(files.length-1);
-                    file = files[arrIdx];
+                    if(Objects.isNull(files)){
+                        ClassPathResource classpathResource = new ClassPathResource(defaultImages);
+                        return ImageIO.read(classpathResource.getInputStream());
+                    }else {
+                        //创建随机对象
+                        SecureRandom random = new SecureRandom();
+                        //随机数组索引，nextInt(len-1)表示随机整数[0,(len-1)]之间的值
+                        int arrIdx = random.nextInt(files.length-1);
+                        file = files[arrIdx];
+                    }
+
                 }
                 return ImageIO.read(file);
             }
