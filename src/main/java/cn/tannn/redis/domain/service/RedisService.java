@@ -30,6 +30,14 @@ public interface RedisService {
      */
     Optional<CaptchaVO> loadImageCaptcha(ServerHttpRequest request);
 
+    /**
+     * 加载图形验证码
+     * ip 作为key（保证相对唯一性）
+     * @param ip 请求信息
+     * @return captcha 无数据为空
+     */
+    Optional<CaptchaVO> loadImageCaptcha(String ip);
+
 
     /**
      * 删除图形验证码
@@ -37,4 +45,11 @@ public interface RedisService {
      * @param request 请求信息
      */
     void deleteImageCaptcha(ServerHttpRequest request);
+
+    /**
+     * 删除图形验证码
+     * ip 作为key（保证相对唯一性）
+     * @param ip 请求信息
+     */
+    void deleteImageCaptcha(String ip);
 }

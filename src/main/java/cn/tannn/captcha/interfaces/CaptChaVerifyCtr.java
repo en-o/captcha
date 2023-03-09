@@ -45,4 +45,23 @@ public class CaptChaVerifyCtr {
         return ResultVO.resultDataMsgForT(aBoolean,aBoolean,"验证");
 
     }
+
+
+    /**
+     * 验证验证码的正确性(指定IP，这个接口尽量不外暴露，做微服务的话这个接口抽离成fegin)
+     * @param answer 用户回答的答案
+     * @return ture or false
+     */
+    @GetMapping("/{answer}/{ip}")
+    public ResultVO<Boolean> imageMathCaptcha(@PathVariable("answer") String answer,
+                                              @PathVariable("ip") String ip) throws IllegalAccessException {
+        CaptchaVO redisCaptcha = redisService.loadImageCaptcha(ip)
+                .orElseThrow(() -> new CaptChaUtilException(CaptChaExceptionMsg.EXPIRES));
+        String question = redisCaptcha.getCaptcha();
+        VerifyCaptchaFactory captchaFactory = new VerifyCaptchaFactory(redisCaptcha.getCaptchaType());
+        Boolean aBoolean = captchaFactory.verifyCaptcha(question, answer);
+        redisService.deleteImageCaptcha(ip);
+        return ResultVO.resultDataMsgForT(aBoolean,aBoolean,"验证");
+
+    }
 }

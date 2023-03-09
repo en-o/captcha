@@ -47,26 +47,37 @@ public class RedisServiceImpl implements RedisService{
     @Override
     public Optional<CaptchaVO> loadImageCaptcha(ServerHttpRequest request) {
         String key = IpUtil.getPoxyIpEnhance(request);
-        String redisFolderKey = RedisUtil.storageCaptchaRedisFolder(key);
+        return loadImageCaptcha(key);
+    }
+
+    @Override
+    public Optional<CaptchaVO> loadImageCaptcha(String ip) {
+        String redisFolderKey = RedisUtil.storageCaptchaRedisFolder(ip);
         try {
             BoundHashOperations<String, Object, CaptchaVO> find = redisTemplate
                     .boundHashOps(redisFolderKey);
-            CaptchaVO captchaVO = find.get(key);
+            CaptchaVO captchaVO = find.get(ip);
             return Optional.ofNullable(captchaVO);
         }catch (Exception e){
-            e.printStackTrace();
+            LOG.error("加载验证码信息失败",e);
             return Optional.empty();
         }
     }
 
     @Override
     public void deleteImageCaptcha(ServerHttpRequest request) {
-       try {
-           String key = IpUtil.getPoxyIpEnhance(request);
-           String redisFolderKey = RedisUtil.storageCaptchaRedisFolder(key);
-           redisTemplate.boundHashOps(redisFolderKey).delete(key);
-       }catch (Exception e){
-           e.printStackTrace();
-       }
+        String key = IpUtil.getPoxyIpEnhance(request);
+        deleteImageCaptcha(key);
+    }
+
+    @Override
+    public void deleteImageCaptcha(String ip) {
+        try {
+            String redisFolderKey = RedisUtil.storageCaptchaRedisFolder(ip);
+            redisTemplate.boundHashOps(redisFolderKey).delete(ip);
+        }catch (Exception e){
+            LOG.error("删除过期验证码失败",e);
+            e.printStackTrace();
+        }
     }
 }
